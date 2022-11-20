@@ -19,6 +19,38 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300&family=Miriam+Libre&family=Nanum+Gothic+Coding&display=swap" rel="stylesheet">
     <style>
+               #form {
+        background-color: red;
+        position: absolute; 
+        overflow-y: auto;
+        background: #0000; padding: 0.25rem; position: absolute; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box;
+        width: 35%;
+        margin-bottom: 25%;
+      }
+      #input { 
+        color:  white;
+        background: rgba(0, 0, 0, 0.15);
+        max-height: 75vh;
+        overflow-y: auto;
+        border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+      #input:focus { outline: none; }
+      #form > button {
+        border-radius: 30px;
+        max-height: 85vh;
+        overflow-y: auto; 
+        background: lightblue; border: none; padding: 0 1rem; margin: 0.25rem; outline: none; color: black; border:solid 3px black;font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; font-weight: 500; }
+
+      #messages { 
+        max-width: 100%;
+    position: absolute;
+    max-height: 40vh;
+    overflow-y: auto;list-style-type: none; margin: 0; padding: 0; }
+
+      #messages > li { padding: 0.5rem 1rem; }
+      #messages > li { background: #0000;font-size: 1.5em; color: white;}
+        #messages > li { width: 100%;
+      
+      }
         html{
             top: 0;
             left: 0;
@@ -162,9 +194,69 @@
                 <br>
                 press 'esc' to close this menu
             </p>
-        </div>       
+        </div> 
+        <ul id="messages"></ul>
+        <form id="form" action="">
+          <input id="input" autocomplete="off" /><button>Send</button>
+        </form>
+          
         <p id="teleporterIn"><b>please walk to the end of the teleporter</b></p>
         <iframe id="secondYear" class="popUps" src="https://yoni-ai.github.io/advanced_js_course_shared/" frameborder="0"></iframe>
         <script type="module" src="skybox.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+        let socket = io();
+      let messages = document.getElementById('messages');
+      let form = document.getElementById('form');
+      let input = document.getElementById('input');
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if(input.value) {
+
+          input.value = input.value.replace('fuck','bless')
+          input.value = input.value.replace('shut up','talk')
+          input.value = input.value.replace('shit','oyyy')
+          input.value = input.value.replace('asshole','prettyFace')
+          input.value = input.value.replace('motherfucker','good boy')
+          socket.emit('chat message', input.value);
+          input.value = '';
+        }
+      });
+    
+      socket.on('chat message', function(msg) { 
+        var item = document.createElement('li');
+        item.textContent = msg;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+      socket.on('output-messages', function(msg) { 
+        console.log(msg);
+        if (msg.length){
+          msg.forEach(message=>{
+            var item = document.createElement('li');
+        item.textContent =message.msg;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+          })
+
+//         function outputMessage(message) {
+//   const div = document.createElement('div');
+//   div.classList.add('message');
+//   const p = document.createElement('p');
+//   p.classList.add('meta');
+//   p.innerText = message.username;
+//   p.innerHTML += `<span>${message.time}</span>`;
+//   div.appendChild(p);
+//   const para = document.createElement('p');
+//   para.classList.add('text');
+//   para.innerText = message.text;
+//   div.appendChild(para);
+//   document.querySelector('.chat-messages').appendChild(div);
+// }
+
+        }
+      });
+    </script>
     </body>
 </html>
